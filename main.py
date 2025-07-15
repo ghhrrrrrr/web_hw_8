@@ -7,14 +7,14 @@ client = redis.StrictRedis(host="localhost", port=6379, password=None)
 cache = RedisLRU(client)
 
 def parse_input(user_input):
-    cmd, args = user_input.split(':')
+    cmd, *args = user_input.split(':')
     cmd = cmd.strip().lower()
-    return cmd, args
+    return cmd, *args
 
 @cache
 def find_by_name(args):
     print('func call\n---------------------------')
-    args = args.strip().split(',')
+    args = ''.join(args).strip().split(',')
     authors = Author.objects(fullname__in=args)
     quotes = Quote.objects(author__in=authors)
     result =[quote.to_mongo().to_dict() for quote in quotes]
@@ -24,7 +24,7 @@ def find_by_name(args):
 @cache
 def find_by_tags(args):
     print('func call\n---------------------------')
-    tags = [tag.strip() for tag in args.split(',')]
+    tags = [tag.strip() for tag in ''.join(args).split(',')]
     quotes = Quote.objects(tags__name__in=tags)
     result =[quote.to_mongo().to_dict() for quote in quotes]
     return result
@@ -38,7 +38,7 @@ if __name__ == '__main__':
         if user_input.strip().lower() == 'exit':
             break
         
-        command, args = parse_input(user_input)
+        command, *args = parse_input(user_input)
         
         if command == 'name':
             print(find_by_name(args))
