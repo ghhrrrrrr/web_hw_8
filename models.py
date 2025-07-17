@@ -1,5 +1,5 @@
 from mongoengine import EmbeddedDocument, Document
-from mongoengine.fields import DateField, EmbeddedDocumentField, ListField, StringField, ReferenceField
+from mongoengine.fields import DateField, BooleanField, EmailField, EmbeddedDocumentField, ListField, StringField, ReferenceField
 
 
 class Author(Document):
@@ -17,3 +17,9 @@ class Quote(Document):
     tags = ListField(EmbeddedDocumentField(Tag))
     author = ReferenceField(Author)
     quote = StringField()
+    
+    
+class Contact(Document):
+    fullname = StringField()
+    email = EmailField()
+    is_sent = BooleanField(default=False)
